@@ -1,4 +1,4 @@
-package restapi.controller;
+package com.restapi.simplespring.controller;
 
 import java.util.List;
 
@@ -15,32 +15,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import restapi.dao.EmployeeDAO;
-import restapi.modal.Employee;
+import com.restapi.simplespring.dao.EmployeeDAO;
+import com.restapi.simplespring.model.Employee;
+
+
 
 @RestController
 @RequestMapping("/company")
 public class EmployeeController {
+ 
 	
 	@Autowired
-	EmployeeDAO emploeeDAO;
+	EmployeeDAO employeeDAO;
 	
-	
-	/*to save an employee */
+	/* to save an employee*/
 	@PostMapping("/employees")
-	public Employee createEmployee(@Valid @RequestBody Employee emp ) {
-		return emploeeDAO.save(emp);
+	public Employee createEmployee(@Valid @RequestBody Employee emp) {
+		return employeeDAO.save(emp);
 	}
 	
-	/*get all employess */
+	/*get all employees*/
 	@GetMapping("/employees")
 	public List<Employee> getAllEmployees(){
-		return emploeeDAO.findAll();
+		return employeeDAO.findAll();
 	}
-	/*get Emeployee by id */
-	@GetMapping("/notes/{id}")
-	public ResponseEntity<Employee> getEmployeeById(@PathVariable(value="id")Long empid){
-		Employee emp=emploeeDAO.findOne(empid);
+	
+	/*get employee by empid*/
+	@GetMapping("/employees/{id}")
+	public ResponseEntity<Employee> getEmployeeById(@PathVariable(value="id") Long empid){
+		
+		Employee emp=employeeDAO.findOne(empid);
+		
 		if(emp==null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -48,33 +53,39 @@ public class EmployeeController {
 		
 	}
 	
-	/*Update and employee by empid*/ 
+	
+	/*update an employee by empid*/
 	@PutMapping("/employees/{id}")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable(value="id")Long empid,@Valid @RequestBody Employee empDetails){
-		Employee emp=emploeeDAO.findOne(empid);
+	public ResponseEntity<Employee> updateEmployee(@PathVariable(value="id") Long empid,@Valid @RequestBody Employee empDetails){
+		
+		Employee emp=employeeDAO.findOne(empid);
 		if(emp==null) {
 			return ResponseEntity.notFound().build();
 		}
+		
 		emp.setName(empDetails.getName());
 		emp.setDesignation(empDetails.getDesignation());
-		emp.setExperstise(empDetails.getExperstise());
-		Employee updateEmployee=emploeeDAO.save(emp);
+		emp.setExpertise(empDetails.getExpertise());
+		
+		Employee updateEmployee=employeeDAO.save(emp);
 		return ResponseEntity.ok().body(updateEmployee);
 		
+		
+		
 	}
-	
 	
 	/*Delete an employee*/
 	@DeleteMapping("/employees/{id}")
-	public ResponseEntity<Employee> deleteEmployee(@PathVariable(value="id")Long empid){
-		Employee emp=emploeeDAO.findOne(empid);
+	public ResponseEntity<Employee> deleteEmployee(@PathVariable(value="id") Long empid){
+		
+		Employee emp=employeeDAO.findOne(empid);
 		if(emp==null) {
 			return ResponseEntity.notFound().build();
 		}
+		employeeDAO.delete(emp);
 		
-		emploeeDAO.delete(emp);
 		return ResponseEntity.ok().build();
+		
+		
 	}
-	
-
 }
